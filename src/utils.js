@@ -1,9 +1,8 @@
 import axios from "axios";
 
 const api = axios.create({
-    baseURL: "http://localhost:4000/api",
+    baseURL: "https://dairy-backend-m9m2.onrender.com/api",
     withCredentials: true,
-    timeout: 30000
 });
 
   export default api;
