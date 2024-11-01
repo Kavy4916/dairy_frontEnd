@@ -25,10 +25,10 @@ useEffect(()=>{
               else if(response.data.code === 201){
                 setMessage(response.data.message);
                 setTimeout(() => {
-                  navigate(response.data.path);
+                  navigate(response.data.path, {replace: true});
                 }, 2000);
               }
-              else if(response.data.code === 400) navigate("/login");
+              else if(response.data.code === 400) navigate("/login", {replace: true});
         }catch(error){
           setMessage("Server down, try later!");
         }
@@ -51,7 +51,7 @@ const handleSubmit = async (e)=>{
       if(response.data.code === 201){
         setMessage(response.data.message);
         setTimeout(() => {
-          navigate(response.data.path);
+          navigate(response.data.path, {replace: true});
         }, 2000);
       }
       else if(response.data.code === 202){
@@ -60,7 +60,7 @@ const handleSubmit = async (e)=>{
           setError(null);
         },3000);
       }
-      else if(response.data.code === 400) navigate("/login");
+      else if(response.data.code === 400) navigate("/login", {replace: true});
 }catch(error){
  setMessage("Server down, try later!")
 }
@@ -76,7 +76,7 @@ const handelDelete = async (e)=>{
       if(response.data.code === 201){
         setMessage(response.data.message);
         setTimeout(() => {
-          navigate("/entry");
+          navigate("/entry", {replace: true});
         }, 2000);
       }
     }

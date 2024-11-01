@@ -11,7 +11,7 @@ const Navbar = () => {
         <div className="flex justify-between h-16">
           <div className="flex items-center">
             <Link className="sm:text-lg md:text-xl lg:text-2xl  font-bold" to="/">
-            <img className="h-14 w-14 mx-2 inline-block rounded-md border-2 border-white" src="/logo192.png"  alt="DIARY" />DAIRY</Link>
+            <img className="h-14 w-14 mx-2 inline-block rounded-md border-2 border-white" src="/logo192.png"  alt="DIARY" />DIARY</Link>
           </div>
           <div className="hidden md:flex space-x-4 items-center">
             <Link to="/" className="hover:bg-gray-700 px-3 py-2 rounded-md font-medium">Home</Link>

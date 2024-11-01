@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import api from "../utils.js";
+import api, { getToday } from "../utils.js";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/navbar.jsx";
 import Loader from "../components/loader.jsx";
@@ -12,13 +12,10 @@ function GoalDate() {
   const [totalScore, setTotalScore] = useState(0);
   const [userScore, setUserScore] = useState(0);
   const [disabled, setDisabled] = useState(true);
-  const today = new Date().toISOString().split("T")[0];
-  const tomorrow =
-    today.split("-")[0] +
-    "-" +
-    today.split("-")[1] +
-    "-" +
-    (parseInt(today.split("-")[2]) + 1);
+  const newDate = new Date();
+  const today = getToday();
+  const tomorrow = new Date(newDate. getTime() + 86400000).toISOString().split("T")[0];
+  console.log(tomorrow);
 
   const [date, setDate] = useState(tomorrow);
   const navigate = useNavigate();
@@ -65,7 +62,7 @@ function GoalDate() {
   const handlegoalEdit = async (e) => {
     e.preventDefault();
     const _id = e.target.id;
-    navigate(`/goal/edit/${_id}`);
+    navigate(`/goal/edit/${_id}`, {replace: true});
   };
 
   if (loading) {

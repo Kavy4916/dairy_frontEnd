@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from "react";
-import api from "../utils.js";
+import React, { useState, useEffect} from "react";
+import api, {getToday} from "../utils.js";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/navbar.jsx";
 import Message from "../components/message.jsx";
 import Loader from "../components/loader.jsx";
+import Checkbox from "../components/checkbox.jsx";
 
 function Goal() {
   const [goal, setGoal] = useState("");
@@ -17,7 +18,8 @@ function Goal() {
   const [totalScore, setTotalScore] = useState(0);
   const [userScore, setUserScore] = useState(0);
   const offset = new Date().getTimezoneOffset();
-  const today = new Date().toISOString().split("T")[0];
+  const today = getToday(offset);
+  const [quote, setQuote] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -37,6 +39,7 @@ function Goal() {
             )
           );
           setGoals(response.data.goals);
+          setQuote(response.data.quote);
         } else if (response.data.code === 201) {
           setMessage(response.data.message);
           setTimeout(() => {
@@ -55,9 +58,7 @@ function Goal() {
   const handleScoreChange = (e) => setScore(e.target.value);
   const handleDeadlineChange = (e) => setDeadline(e.target.value);
 
-  const handleCheckboxClick = async (e) => {
-    const _id = e.target.id;
-    const status = e.target.checked;
+  const handleCheckboxClick = async (_id, status) => {
     try {
       const response = await api.post("/goal/check", {
         _id,
@@ -75,14 +76,16 @@ function Goal() {
       } else if (response.data.code === 201) {
         setMessage(response.data.message);
         setTimeout(() => {
-          navigate(response.data.path);
+          navigate(response.data.path, {replace: true});
         }, 2000);
-      } else if (response.data.code === 400) navigate("/login");
+      } else if (response.data.code === 400) navigate("/login", {replace: true});
     } catch (error) {
       setMessage("Server down, try later!");
     }
   };
 
+
+  
   const handelgoalEdit = async (e) => {
     e.preventDefault();
     const _id = e.target.id;
@@ -100,7 +103,8 @@ function Goal() {
       });
       if (response.data.code === 200) {
         if(deadline === today){
-          setGoals([response.data.goal, ...goals]);
+          console.log(deadline.length);
+          setGoals([ ...goals, response.data.goal]);
           setTotalScore(totalScore + response.data.goal.score);
         }
         setGoal("");
@@ -113,14 +117,14 @@ function Goal() {
       } else if (response.data.code === 201) {
         setMessage(response.data.message);
         setTimeout(() => {
-          navigate(response.data.path);
+          navigate(response.data.path, {replace: true});
         }, 2000);
       } else if (response.data.code === 202) {
         setError(response.data.message);
         setTimeout(() => {
           setError(null);
         }, 3000);
-      } else if (response.data.code === 400) navigate("/login");
+      } else if (response.data.code === 400) navigate("/login", {replace: true});
     } catch (error) {
       setMessage("Server down, try later!");
     }
@@ -141,7 +145,13 @@ function Goal() {
     <>
       <Navbar />
       <div className="container mx-auto p-4 max-w-lg">
-        <div>
+        <div className="mb-2">
+          <h1 className="text-2xl text-center font-bold mb-2">Quote of the Day</h1>
+          <div className="bg-gray-100 p-4 rounded ">
+          <div className="font-semibold text-xl">{quote.q}</div>
+          <div className="flex justify-end"><p>{quote.a}</p></div>
+          </div>
+        </div>
           <h1 className="text-2xl text-center font-bold mb-2">
             Your Goals for the Day
           </h1>
@@ -176,12 +186,9 @@ function Goal() {
                       <label htmlFor={entry._id} className="font-semibold mr-2">
                         Done
                       </label>
-                      <input
-                        id={entry._id}
-                        type="checkbox"
-                        checked={entry.status || false}
-                        onChange={handleCheckboxClick}
-                        className="h-4 w-4"
+                      <Checkbox id={entry._id}
+                        status={entry.status}
+                        handleClick={handleCheckboxClick}
                       />
                     </div>
                     <div className="flex justify-end">
@@ -199,7 +206,6 @@ function Goal() {
               </ul>
             </>
           )}
-        </div>
         <h2 className="text-xl font-bold my-4">Create a New Goal</h2>
 
         <form onSubmit={handleSubmit} className="mb-6 space-y-4">

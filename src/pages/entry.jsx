@@ -17,31 +17,28 @@ function Entry() {
   const [message, setMessage] = useState(null);
   const navigate = useNavigate();
 
-
   const fetchEntries = async () => {
     try {
       const response = await api.get(`/entry/getPage`, { params: { page } });
-      if(response.data.code === 200){
+      if (response.data.code === 200) {
         setEntries(response.data.entries);
-      setCount(response.data.count);
-      setPage(response.data.page);
-      }
-      else if(response.data.code === 201){
+        setCount(response.data.count);
+        setPage(response.data.page);
+      } else if (response.data.code === 201) {
         setMessage(response.data.message);
         setTimeout(() => {
-          navigate(response.data.path);
+          navigate(response.data.path, {replace: true});
         }, 2000);
-      }
-      else if(response.data.code === 400) navigate("/login");
+      } else if (response.data.code === 400) navigate("/login", {replace: true});
       setLoading(false);
     } catch (error) {
       setMessage("Server down, try later!");
     }
   };
 
-  useEffect(() => { 
+  useEffect(() => {
     setLoading(true);
-    const fetch = async () =>{
+    const fetch = async () => {
       await fetchEntries();
     };
     fetch();
@@ -54,51 +51,44 @@ function Entry() {
     e.preventDefault();
     try {
       const response = await api.post("/entry/create", { title, content });
-      if(response.data.code === 200){
-      setTitle("");
-      setContent("");
-      setSuccess(response.data.message);
-      setTimeout(()=>{
-        setSuccess(null);
-      }, 3000);
-      await fetchEntries(); // Refresh entries after submission
-      }
-      else if(response.data.code === 201)
-      {
+      if (response.data.code === 200) {
+        setTitle("");
+        setContent("");
+        setSuccess(response.data.message);
+        setTimeout(() => {
+          setSuccess(null);
+        }, 3000);
+        await fetchEntries(); // Refresh entries after submission
+      } else if (response.data.code === 201) {
         setMessage(response.data.message);
-        setTimeout(()=>{
-          navigate(response.data.path);
-        },2000);
-      }
-      else if(response.data.code === 202)
-      {
+        setTimeout(() => {
+          navigate(response.data.path, {replace: true});
+        }, 2000);
+      } else if (response.data.code === 202) {
         setError(response.data.message);
         setTimeout(() => {
           setError(null);
         }, 3000);
-      }
-      else if(response.data.code === 400) navigate("/login");
+      } else if (response.data.code === 400)
+        navigate("/login", { replace: true });
     } catch (error) {
       setMessage("Server down, try later!");
     }
   };
 
-  const handelEntryEdit = async (e)=>{
+  const handelEntryEdit = async (e) => {
     e.preventDefault();
     navigate(`/entry/edit/${e.target.id}`);
-  }
+  };
 
-  if(loading)
-  {
+  if (loading) {
     return (
       <>
-      <Navbar />
-      <Loader />
+        <Navbar />
+        <Loader />
       </>
-    )
-  }
-
-  else if(message) return <Message text={message}/>
+    );
+  } else if (message) return <Message text={message} />;
 
   return (
     <>
@@ -107,7 +97,9 @@ function Entry() {
         <h1 className="text-2xl font-bold mb-4">Create a New Diary Entry</h1>
         <form onSubmit={handleSubmit} className="mb-6">
           <div className="mb-4">
-            <label htmlFor="title" className="block font-medium mb-2">Title:</label>
+            <label htmlFor="title" className="block font-medium mb-2">
+              Title:
+            </label>
             <input
               type="text"
               id="title"
@@ -121,7 +113,9 @@ function Entry() {
             />
           </div>
           <div className="mb-4">
-            <label htmlFor="content" className="block font-medium mb-2">Content:</label>
+            <label htmlFor="content" className="block font-medium mb-2">
+              Content:
+            </label>
             <textarea
               id="content"
               value={content}
@@ -134,8 +128,13 @@ function Entry() {
             />
           </div>
           {error && <p className="text-red-600 text-center my-2">{error}</p>}
-          {success && <p className="text-green-600 text-center my-2">{success}</p>}
-          <button type="submit" className="w-full bg-gray-500 text-white p-2 rounded hover:bg-gray-600">
+          {success && (
+            <p className="text-green-600 text-center my-2">{success}</p>
+          )}
+          <button
+            type="submit"
+            className="w-full bg-gray-500 text-white p-2 rounded hover:bg-gray-600"
+          >
             Add Entry
           </button>
         </form>
@@ -149,9 +148,19 @@ function Entry() {
               {entries.map((entry) => (
                 <li key={entry._id} className="p-4 bg-gray-100 rounded shadow">
                   <h4 className="text-lg font-semibold">{entry.title}</h4>
-                  <p className="text-xs mb-1" >{new Date(entry.createdAt).toLocaleDateString("en-UK")}</p>
+                  <p className="text-xs mb-1">
+                    {new Date(entry.createdAt).toLocaleDateString("en-UK")}
+                  </p>
                   <p>{entry.content}</p>
-                  <div className="flex justify-end"><button className="bg-gray-500 text-white p-2 rounded hover:bg-gray-600" id={entry._id} onClick={handelEntryEdit}>EDIT</button></div>
+                  <div className="flex justify-end">
+                    <button
+                      className="bg-gray-500 text-white p-2 rounded hover:bg-gray-600"
+                      id={entry._id}
+                      onClick={handelEntryEdit}
+                    >
+                      EDIT
+                    </button>
+                  </div>
                 </li>
               ))}
             </ul>
@@ -167,7 +176,9 @@ function Entry() {
           >
             Previous
           </button>
-          <span>Page {page} of {Math.ceil(count / 10)}</span>
+          <span>
+            Page {page} of {Math.ceil(count / 10)}
+          </span>
           <button
             onClick={() => setPage((prev) => prev + 1)}
             className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"

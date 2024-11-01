@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import Navbar from "../components/navbar.jsx";
 import Loader from "../components/loader.jsx";
 import Message from "../components/message.jsx";
+import Checkbox from "../components/checkbox.jsx";
 
 function Yesterday() {
   const [goals, setGoals] = useState([]);
@@ -129,12 +130,9 @@ function Yesterday() {
                       <label htmlFor={entry._id} className="font-semibold mr-2">
                         Done
                       </label>
-                      <input
-                        id={entry._id}
-                        type="checkbox"
-                        checked={entry.status || false}
-                        onChange={handleCheckboxClick}
-                        className="h-4 w-4"
+                      <Checkbox id={entry._id}
+                        status={entry.status}
+                        handleClick={handleCheckboxClick}
                       />
                     </div>
                     <div className="flex justify-end">

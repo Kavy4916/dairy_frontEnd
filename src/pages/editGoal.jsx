@@ -1,9 +1,9 @@
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams} from "react-router-dom";
 import Navbar from "../components/navbar.jsx";
 import Message from "../components/message.jsx";
 import Loader from "../components/loader.jsx";
 import { useState, useEffect } from "react";
-import api from "../utils";
+import api, { getToday } from "../utils";
 
 function EditGoal() {
   const { _id } = useParams();
@@ -16,7 +16,7 @@ function EditGoal() {
   const [checked, setChecked] = useState(false);
   const [disabled, setDisabled] = useState(true);
   const offset = new Date().getTimezoneOffset();
-  const today = new Date().toISOString().split("T")[0];
+  const today = getToday();
 
   useEffect(() => {
     const fetch = async () => {
@@ -28,9 +28,9 @@ function EditGoal() {
         } else if (response.data.code === 201) {
           setMessage(response.data.message);
           setTimeout(() => {
-            navigate(response.data.path);
+            navigate(response.data.path, {replace: true});
           }, 2000);
-        } else if (response.data.code === 400) navigate("/login");
+        } else if (response.data.code === 400) navigate("/login",{ replace: true });
       } catch (error) {
         setMessage("Server down, try later!");
       }
@@ -60,7 +60,7 @@ function EditGoal() {
           if(response.data.code === 201){
             setMessage(response.data.message);
             setTimeout(() => {
-              navigate(response.data.path);
+              navigate(response.data.path, {replace: true});
             }, 2000);
           }
           else if(response.data.code === 202){
@@ -69,7 +69,7 @@ function EditGoal() {
               setError(null);
             },3000);
           }
-          else if(response.data.code === 400) navigate("/login");
+          else if(response.data.code === 400) navigate("/login", {replace: true});
     }catch(error){
      setMessage("Server down, try later!")
     }
@@ -81,14 +81,12 @@ function EditGoal() {
     setLoading(true);
       try{
         const response = await api.post("/goal/delete",{_id: goal._id, offset});
-        if(response.data.code){
-          if(response.data.code === 201){
+          if(response.data?.code === 201){
             setMessage(response.data.message);
             setTimeout(() => {
-              navigate(response.data.path);
+              navigate(response.data.path, {replace: true});
             }, 2000);
           }
-        }
     }catch(error){
       setMessage("Server down, try later!")
     }
