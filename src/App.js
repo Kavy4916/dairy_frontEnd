@@ -8,6 +8,7 @@ import Logout from "./pages/logout.jsx";
 import EditGoal from "./pages/editGoal.jsx";
 import Yesterday from "./pages/yesterday.jsx";
 import GoalDate from "./pages/dateGoal.jsx";
+import Register from "./pages/register.jsx";
 
 function App() {
   // State to store title and content
@@ -25,6 +26,7 @@ function App() {
              <Route path="/goal/yesterday" element={<Yesterday />}/>
              <Route path="/goal/date" element={<GoalDate />}/>
              <Route path="/logout" element={<Logout />}/>
+             <Route path="/register" element={<Register />}/>
     </Routes>
     </Router>
     </div>
