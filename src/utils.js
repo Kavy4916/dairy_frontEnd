@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-    baseURL: "https://sms-backend-2qeh.onrender.com/api",
+    baseURL: "https://dairy-backend-m9m2.onrender.com/api",
     withCredentials: true,
 });
 
